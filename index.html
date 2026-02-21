@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recuerdos</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', cursive;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.photo.coupon {
+    object-fit: contain;
+    background: white;
+}
+.bg-layer {
+    position: fixed;
+    inset: 0;
+    background: url("./bg.png") center center / cover no-repeat;
+    z-index: -1;
+}
+
+.container {
+    width: 350px;
+    text-align: center;
+}
+
+.module-text {
+    font-size: 22px;
+    color: #c14d6c;
+    margin-bottom: 20px;
+}
+
+.module-photo {
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0px 10px 20px rgba(0,0,0,0.15);
+    margin-bottom: 20px;
+}
+
+.module-photo img {
+    width: 100%;
+    border-radius: 5px;
+}
+
+.module-click {
+    
+    font-size: 60px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.module-click:hover {
+    transform: scale(1.2);
+}
+
+.module-bar {
+    margin-top: 20px;
+    height: 20px;
+    background: #f8c9d4;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ff4d6d, #ff85a1);
+    transition: width 0.3s;
+}
+
+
+.heart-btn {
+    width: 150px;
+    cursor: pointer;
+    margin:0 auto;
+}
+
+/* Clase que se activará al hacer click */
+.heart-animate {
+    animation: beat 0.4s ease;
+}
+
+@keyframes beat {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.3); }
+    50%  { transform: scale(0.9); }
+    70%  { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+
+.module-photo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 250px;
+    height: 250px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    
+}
+
+.photo-stack {
+    position: relative;
+
+    width: 300px;
+    aspect-ratio: 3 / 4;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.photo {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+    background: white;
+    padding: 8px;
+    transition: transform 0.6s ease, opacity 0.6s ease;
+    box-sizing: border-box;
+  
+}
+
+/* Foto de atrás */
+.back {
+    transform: rotate(-5deg);
+    z-index: 1;
+}
+
+/* Foto de arriba (ligeramente inclinada) */
+.top {
+    transform: rotate(4deg);
+    z-index: 2;
+}
+
+/* Animación cuando se tira */
+.throw {
+    transform: translateX(300px) rotate(20deg);
+    opacity: 0;
+}
+</style>
+<head>
+    <meta charset="UTF-8">
+    <title>Recuerdos</title>
+    <link rel="icon" type="image/png" href="./corazon.png">
+</head>
+
+
+<body>
+
+
+
+<div class="bg-layer"></div>
+
+<div class="container">
+
+    <!-- 1 Módulo Texto -->
+    <div class="module-text" id="text">
+        jokers jajajaj
+    </div>
+
+    <!-- 2 Módulo Foto -->
+    <div class="module-photo">
+        <div class="photo-stack">
+            <img class="photo top" id="photoTop">
+            <img class="photo back" id="photoBack">
+        </div>
+    </div>
+
+    <!-- 3 Módulo Click -->
+    <div class="module-click">
+        <img src="./corazon.png" id="heart" class="heart-btn">
+    </div>
+
+    <!-- 4 Módulo Barra -->
+    <div class="module-bar">
+        <div class="progress" id="progress"></div>
+    </div>
+
+</div>
+
+<script>
+const heart = document.getElementById("heart");
+const progress = document.getElementById("progress");
+const text = document.getElementById("text");
+const photoTop = document.getElementById("photoTop");
+const photoBack = document.getElementById("photoBack");
+
+let clicks = 0;
+let level = 0;
+let imageIndex = 1;
+let requiredClicks = 5;
+
+// ================= IMÁGENES =================
+const images = [];
+
+
+
+
+for (let i = 1; i <= 40; i++) {
+    if (i % 5 === 0) {
+        images.push(`./img/${i}.png`);
+    } else {
+        images.push(`./img/${i}.jpeg`);
+    }
+}
+
+// ================= FRASES =================
+const texts = [
+"jokers jajajaj",
+"que bonita lengua tienes amor",
+"mimidos",
+"hola soy roni y me gusta jenni",
+"DESBLOQUEASTE UN CUPON AMOR :D!",
+"Todavia me acuerdo de ese dia baile como tontuelo",
+"Coringas",
+"bait de que ibas a terminar ddd",
+"Me gusta mucho tocar tus piernas, preciosa",
+"OTRO AMOR :D",
+"un dibujo bonito",
+"gracias amor por acompañarme en mi cumple TEAMOOO",
+"Yo escuchando a mi tractor",
+"pa que te rias",
+"OTRO AMOR OTROO!!! :D",
+"un rato fokin grosero",
+"NOSOTROS BEBESSS",
+"GATILER AY AMOR",
+"ese dia fue muy bonito C:",
+"CUPON DE AMOR PARA MI PRINCESA HERMOSA",
+"tu de niñaa aaa pobrecita no llore",
+"pa que te motives grrr",
+"que bonita te vez con tu peluca roja",
+"y esas patas JANSJDN",
+"OTROOOOOO Bv",
+"Dormiditosss",
+"Pero si o no?",
+"YO BEBE",
+"nosotros imitando el titanic pero sin un iceberg ni nada",
+"OTRO MI NIÑAAA",
+":o ajnsdjans",
+"y esa pelona",
+"ESAS PATAS JAJSJAJSN",
+"yo cholo Bv",
+"OTROOO",
+"Y mira de nuestras primeras salidas",
+"Aun recuerdo ese dia... TE AMO CIELO",
+"nmms llegaste bien lejos mejor me void"
+];
+
+// ================= INICIALIZAR =================
+photoTop.src = images[0];
+photoBack.src = images[1];
+text.innerText = texts[0];
+
+// ================= CLICK =================
+heart.addEventListener("click", () => {
+
+    // Animación corazón
+    heart.classList.remove("heart-animate");
+    void heart.offsetWidth;
+    heart.classList.add("heart-animate");
+
+    clicks++;
+
+    let percent = (clicks / requiredClicks) * 100;
+    progress.style.width = percent + "%";
+
+    if (clicks >= requiredClicks) {
+
+        heart.style.pointerEvents = "none";
+        photoTop.classList.add("throw");
+
+        setTimeout(() => {
+
+    level++;
+    clicks = 0;
+    requiredClicks += 3;
+    progress.style.width = "0%";
+
+    // Texto siguiente
+    text.innerText = texts[level % texts.length];
+
+    // 🔥 Ajuste aquí
+    const nextIndex = (level + 1) % images.length;
+
+    const isCoupon = (nextIndex + 1) % 5 === 0;
+
+        if (isCoupon) {
+            photoTop.classList.add("coupon");
+        } else {
+            photoTop.classList.remove("coupon");
+        }
+
+    photoTop.src = images[nextIndex];
+
+    // Intercambiar visualmente
+    const temp = photoBack.src;
+    photoBack.src = photoTop.src;
+    photoTop.src = temp;
+
+    photoTop.classList.remove("throw");
+    heart.style.pointerEvents = "auto";
+
+}, 600);
+    }
+});
+</script>
+
+</body>
+</html>
